@@ -1,0 +1,5 @@
+worlds:
+  world_lifesteal:
+    lifesteal-multiplier: 2.0
+  world_normal:
+    lifesteal-multiplier: 1.0
