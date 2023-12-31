@@ -1,0 +1,6 @@
+name: LifestealPlugin
+version: 1.0
+description: A Minecraft plugin for lifesteal hearts in specific worlds
+main: com.yourname.lifestealplugin.LifestealPlugin
+author: YourName
+api-version: 1.17
