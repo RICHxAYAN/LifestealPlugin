@@ -1,33 +1,45 @@
-package com.RICHxAYAN;
+package com.RICHxAYAN.lifestealplugin;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class LifestealPlugin extends JavaPlugin {
+public class LifestealPlugin extends JavaPlugin implements Listener {
+
+    private FileConfiguration config;
 
     @Override
     public void onEnable() {
-        getLogger().info("LifestealPlugin has been enabled!");
+        // Register events and load configuration
+        getServer().getPluginManager().registerEvents(this, this);
+        config = getConfig();
+        saveDefaultConfig();
     }
 
-    @Override
-    public void onDisable() {
-        getLogger().info("LifestealPlugin has been disabled!");
-    }
+    @EventHandler
+    public void onPlayerDamage(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof Player) {
+            Player player = (Player) event.getEntity();
+            String worldName = player.getWorld().getName();
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (command.getName().equalsIgnoreCase("examplecommand")) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                player.sendMessage("Hello, " + player.getName() + "! This is an example command.");
-            } else {
-                sender.sendMessage("This command can only be executed by a player.");
+            if (config.contains("worlds." + worldName)) {
+                double lifestealMultiplier = config.getDouble("worlds." + worldName + ".lifesteal-multiplier");
+                double lifestealAmount = calculateLifesteal(event.getDamage(), lifestealMultiplier);
+
+                // Adjust player health
+                player.setHealth(player.getHealth() + lifestealAmount);
             }
-            return true;
         }
-        return false;
+    }
+
+    private double calculateLifesteal(double damage, double multiplier) {
+        // Implement your lifesteal calculation logic
+        // Example: return 2.0 for lifesteal of 2 hearts
+        return damage * multiplier;
     }
 }
